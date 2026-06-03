@@ -11,24 +11,24 @@ import { heatmapData } from "@/lib/data"
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
-function getOpacity(value: number): string {
+function getOpacity(value: number): number {
   const maxVal = Math.max(...heatmapData.flat())
   const ratio = value / maxVal
-  if (ratio === 0) return "10"
-  if (ratio <= 0.2) return "20"
-  if (ratio <= 0.4) return "40"
-  if (ratio <= 0.6) return "60"
-  if (ratio <= 0.8) return "80"
-  return "100"
+  if (ratio === 0) return 0.08
+  if (ratio <= 0.2) return 0.2
+  if (ratio <= 0.4) return 0.4
+  if (ratio <= 0.6) return 0.6
+  if (ratio <= 0.8) return 0.8
+  return 1
 }
 
-const LEGEND_STEPS = [10, 20, 40, 60, 80, 100]
+const LEGEND_STEPS = [0.08, 0.2, 0.4, 0.6, 0.8, 1]
 
 export default function ActivityHeatmap() {
   const data = useMemo(() => heatmapData, [])
 
   return (
-    <Card className="animate-in fade-in slide-in-from-bottom-2">
+    <Card>
       <CardHeader className="pb-0">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           Activity Heatmap
@@ -43,22 +43,19 @@ export default function ActivityHeatmap() {
                   {DAYS[dayIdx]}
                 </span>
                 <div className="flex gap-[2px]">
-                  {row.map((val, hourIdx) => {
-                    const opacity = getOpacity(val)
-                    return (
-                      <Tooltip key={hourIdx}>
-                        <TooltipTrigger>
-                          <div
-                            className="size-[14px] rounded-[3px] bg-primary transition-all hover:ring-2 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background"
-                            style={{ opacity: Number(opacity) / 100 }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="text-xs">
-                          {DAYS[dayIdx]} {hourIdx}:00 — {val} events
-                        </TooltipContent>
-                      </Tooltip>
-                    )
-                  })}
+                  {row.map((val, hourIdx) => (
+                    <Tooltip key={hourIdx}>
+                      <TooltipTrigger>
+                        <div
+                          className="size-[14px] rounded-[3px] bg-primary transition-opacity hover:ring-2 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background"
+                          style={{ opacity: getOpacity(val) }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        {DAYS[dayIdx]} {hourIdx}:00 — {val} events
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
                 </div>
               </div>
             ))}
@@ -71,7 +68,7 @@ export default function ActivityHeatmap() {
             <div
               key={pct}
               className="size-[14px] rounded-[3px] bg-primary"
-              style={{ opacity: pct / 100 }}
+              style={{ opacity: pct }}
             />
           ))}
           <span>High</span>

@@ -23,7 +23,9 @@ export type DataPoint = {
 export type AcquisitionItem = {
   source: string
   value: number
-  color: string
+  trend: "up" | "down"
+  users: number
+  change: number
 }
 
 export type PageRow = {
@@ -104,13 +106,29 @@ export const revenueData: Record<DateRange, DataPoint[]> = {
   ],
 }
 
-export const acquisitionData: AcquisitionItem[] = [
-  { source: "Organic", value: 42, color: "hsl(220 70% 50%)" },
-  { source: "Referral", value: 24, color: "hsl(160 60% 45%)" },
-  { source: "Direct", value: 18, color: "hsl(30 80% 55%)" },
-  { source: "Paid", value: 11, color: "hsl(280 60% 55%)" },
-  { source: "Social", value: 5, color: "hsl(340 80% 55%)" },
-]
+export const acquisitionData: Record<DateRange, AcquisitionItem[]> = {
+  "7d": [
+    { source: "Organic", value: 42, trend: "up", users: 12480, change: 8 },
+    { source: "Referral", value: 24, trend: "up", users: 7120, change: 12 },
+    { source: "Direct", value: 18, trend: "down", users: 5340, change: 3 },
+    { source: "Paid", value: 11, trend: "up", users: 3270, change: 15 },
+    { source: "Social", value: 5, trend: "down", users: 1480, change: 6 },
+  ],
+  "30d": [
+    { source: "Organic", value: 39, trend: "up", users: 34900, change: 5 },
+    { source: "Referral", value: 27, trend: "up", users: 23700, change: 10 },
+    { source: "Direct", value: 16, trend: "down", users: 14500, change: 2 },
+    { source: "Paid", value: 13, trend: "up", users: 11200, change: 18 },
+    { source: "Social", value: 5, trend: "down", users: 4800, change: 4 },
+  ],
+  "90d": [
+    { source: "Organic", value: 36, trend: "down", users: 82300, change: 2 },
+    { source: "Referral", value: 29, trend: "up", users: 66400, change: 14 },
+    { source: "Direct", value: 17, trend: "up", users: 38900, change: 5 },
+    { source: "Paid", value: 14, trend: "up", users: 31500, change: 22 },
+    { source: "Social", value: 4, trend: "down", users: 9700, change: 8 },
+  ],
+}
 
 export const pagesData: PageRow[] = [
   { page: "/dashboard", views: 12480, uniqueVisitors: 8920, bounceRate: 18.2, avgTime: "4m 12s" },

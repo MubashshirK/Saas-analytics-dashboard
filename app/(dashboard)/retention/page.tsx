@@ -1,11 +1,11 @@
 "use client"
 
-import { useDateRange } from "@/lib/dashboard-context"
+import { useDashboard } from "@/lib/dashboard-context"
 import KPICards from "@/components/dashboard/KPICards"
 import ActivityHeatmap from "@/components/dashboard/ActivityHeatmap"
 
 export default function RetentionPage() {
-  const { dateRange } = useDateRange()
+  const { dateRange } = useDashboard()
 
   return (
     <div className="space-y-6">

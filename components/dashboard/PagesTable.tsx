@@ -49,7 +49,7 @@ export default function PagesTable() {
   }
 
   return (
-    <Card className="animate-in fade-in slide-in-from-bottom-2">
+    <Card>
       <CardHeader className="pb-0">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           Top Pages
