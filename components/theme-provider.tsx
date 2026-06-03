@@ -26,6 +26,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThemeState(getStoredTheme())
     setMounted(true)
   }, [])
@@ -35,6 +36,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.classList.remove("dark", "light")
     document.documentElement.classList.add(theme)
     localStorage.setItem(STORAGE_KEY, theme)
+    document.cookie = `${STORAGE_KEY}=${theme};path=/;max-age=31536000`
   }, [theme, mounted])
 
   const setTheme = useCallback((t: Theme) => setThemeState(t), [])

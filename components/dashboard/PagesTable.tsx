@@ -15,6 +15,11 @@ import { pagesData, type PageRow } from "@/lib/data"
 
 type SortKey = keyof PageRow
 
+function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: SortKey; sortDir: "asc" | "desc" }) {
+  if (sortKey !== column) return null
+  return sortDir === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
+}
+
 export default function PagesTable() {
   const [sortKey, setSortKey] = useState<SortKey>("views")
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc")
@@ -43,11 +48,6 @@ export default function PagesTable() {
     }
   }
 
-  const SortIcon = ({ column }: { column: SortKey }) => {
-    if (sortKey !== column) return null
-    return sortDir === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
-  }
-
   return (
     <Card>
       <CardHeader className="pb-0">
@@ -56,38 +56,39 @@ export default function PagesTable() {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <Table>
+        <div className="overflow-x-auto">
+          <Table>
           <TableHeader>
             <TableRow className="border-b-0">
               <TableHead onClick={() => toggleSort("page")} className="h-10 cursor-pointer text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 <span className="inline-flex items-center gap-1">
-                  Page <SortIcon column="page" />
+                  Page <SortIcon column="page" sortKey={sortKey} sortDir={sortDir} />
                 </span>
               </TableHead>
               <TableHead onClick={() => toggleSort("views")} className="h-10 cursor-pointer text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 <span className="inline-flex items-center gap-1 justify-end">
-                  Views <SortIcon column="views" />
+                  Views <SortIcon column="views" sortKey={sortKey} sortDir={sortDir} />
                 </span>
               </TableHead>
               <TableHead onClick={() => toggleSort("uniqueVisitors")} className="hidden h-10 cursor-pointer text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground md:table-cell">
                 <span className="inline-flex items-center gap-1 justify-end">
-                  Unique <SortIcon column="uniqueVisitors" />
+                  Unique <SortIcon column="uniqueVisitors" sortKey={sortKey} sortDir={sortDir} />
                 </span>
               </TableHead>
               <TableHead onClick={() => toggleSort("bounceRate")} className="hidden h-10 cursor-pointer text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground md:table-cell">
                 <span className="inline-flex items-center gap-1 justify-end">
-                  Bounce <SortIcon column="bounceRate" />
+                  Bounce <SortIcon column="bounceRate" sortKey={sortKey} sortDir={sortDir} />
                 </span>
               </TableHead>
               <TableHead onClick={() => toggleSort("avgTime")} className="hidden h-10 cursor-pointer text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground lg:table-cell">
                 <span className="inline-flex items-center gap-1 justify-end">
-                  Avg. Time <SortIcon column="avgTime" />
+                  Avg. Time <SortIcon column="avgTime" sortKey={sortKey} sortDir={sortDir} />
                 </span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sorted.map((row, idx) => (
+            {sorted.map((row) => (
               <TableRow
                 key={row.page}
                 className="border-b border-border/40 transition-colors hover:bg-muted/30"
@@ -111,6 +112,7 @@ export default function PagesTable() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </CardContent>
     </Card>
   )

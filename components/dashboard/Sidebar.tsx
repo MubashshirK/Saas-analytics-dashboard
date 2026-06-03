@@ -13,6 +13,7 @@ import {
   LogOut,
   User,
   RefreshCw,
+  X,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
@@ -30,6 +31,11 @@ import {
 } from "@/components/ui/tooltip"
 import { useDashboard } from "@/lib/dashboard-context"
 
+interface SidebarProps {
+  mobileMenuOpen: boolean
+  onClose: () => void
+}
+
 const navItems = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
   { label: "Acquisition", href: "/acquisition", icon: BarChart3 },
@@ -38,17 +44,26 @@ const navItems = [
   { label: "Settings", href: "/settings", icon: Settings },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ mobileMenuOpen, onClose }: SidebarProps) {
   const { sidebarCollapsed, setSidebarCollapsed } = useDashboard()
   const pathname = usePathname()
   const router = useRouter()
 
+  const handleNav = (href: string) => {
+    router.push(href)
+    onClose()
+  }
+
   return (
     <aside
-      className={cn(
-        "fixed left-0 top-0 z-30 flex h-full flex-col border-r bg-sidebar transition-[width] duration-300 will-change-[width]",
-        sidebarCollapsed ? "w-16" : "w-60"
-      )}
+      className={
+        "fixed left-0 top-0 z-30 flex h-full flex-col border-r bg-sidebar " +
+        (sidebarCollapsed ? "w-16 " : "w-60 ") +
+        "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-50 max-md:w-60 max-md:transition-[transform] max-md:duration-300 max-md:ease-in-out max-md:will-change-[transform] " +
+        "md:transition-[width] md:duration-300 md:will-change-[width] " +
+        "md:translate-x-0 " +
+        (mobileMenuOpen ? "max-md:[transform:translateX(0px)]" : "max-md:[transform:translateX(-100%)]")
+      }
     >
       <div className="flex h-14 items-center border-b">
         {sidebarCollapsed ? (
@@ -62,9 +77,17 @@ export default function Sidebar() {
             <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 text-sm font-bold text-primary-foreground shadow-sm">
               S
             </div>
-            <div className="flex flex-col leading-tight">
-              <span className="text-sm font-semibold tracking-tight">SaaS</span>
-              <span className="text-[10px] text-sidebar-foreground/40">Analytics</span>
+            <div className="flex flex-1 items-center justify-between">
+              <div className="flex flex-col leading-tight">
+                <span className="text-sm font-semibold tracking-tight">SaaS</span>
+                <span className="text-[10px] text-sidebar-foreground/40">Analytics</span>
+              </div>
+              <button
+                onClick={onClose}
+                className="flex size-7 items-center justify-center rounded-lg text-sidebar-foreground/40 hover:bg-sidebar-accent hover:text-sidebar-foreground md:hidden"
+              >
+                <X size={16} />
+              </button>
             </div>
           </div>
         )}
@@ -85,6 +108,7 @@ export default function Sidebar() {
             <Link
               key={item.label}
               href={item.href}
+              onClick={onClose}
               className={cn(
                 "group relative flex items-center rounded-lg text-sm font-medium transition-all",
                 sidebarCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5",
@@ -126,7 +150,7 @@ export default function Sidebar() {
                         ? "text-sidebar-accent-foreground"
                         : "text-sidebar-foreground/60 hover:text-sidebar-foreground"
                     )}
-                    onClick={() => router.push(item.href)}
+                    onClick={() => handleNav(item.href)}
                   >
                     {isActive && (
                       <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-sidebar-accent-foreground" />
@@ -147,7 +171,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className={cn("px-2 pb-2", sidebarCollapsed && "px-0 flex justify-center")}>
+      <div className={cn("max-md:hidden px-2 pb-2", sidebarCollapsed && "px-0 flex justify-center")}>
         <Tooltip>
           <TooltipTrigger>
             <span
@@ -168,9 +192,9 @@ export default function Sidebar() {
 
       <Separator />
 
-      <div className={cn("overflow-hidden", sidebarCollapsed ? "p-2" : "p-3")}>
+      <div className={cn("overflow-hidden", sidebarCollapsed ? "flex justify-center ml-2" : "p-3")}>
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger className={sidebarCollapsed ? "flex items-center justify-center" : ""}>
             <span
               className={cn(
                 "flex w-full cursor-pointer items-center gap-3 rounded-lg text-sm transition-colors hover:bg-sidebar-accent/50",
@@ -212,6 +236,15 @@ export default function Sidebar() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+
+      <div className={cn("pb-2 text-center", sidebarCollapsed ? "px-0" : "px-3")}>
+        <span className={cn(
+          "text-[10px] text-sidebar-foreground/20 transition-opacity duration-200",
+          sidebarCollapsed && "w-0 opacity-0 overflow-hidden inline-block"
+        )}>
+          Built by Mubashshir Khan
+        </span>
       </div>
     </aside>
   )

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
+import { X } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { initialEvents, type FeedEvent } from "@/lib/data"
@@ -30,6 +31,11 @@ const TYPE_STYLES: Record<string, { border: string; badge: string; label: string
   },
 }
 
+interface EventsFeedProps {
+  mobileOpen: boolean
+  onClose: () => void
+}
+
 function randomEvent(id: number): FeedEvent {
   const type = EVENT_TYPES[Math.floor(Math.random() * EVENT_TYPES.length)]
   const labels = EVENT_LABELS[type]
@@ -52,7 +58,7 @@ function relativeTime(ts: number, now: number): string {
   return `${days}d ago`
 }
 
-export default function EventsFeed() {
+export default function EventsFeed({ mobileOpen, onClose }: EventsFeedProps) {
   const [events, setEvents] = useState<FeedEvent[]>(initialEvents)
   const [now, setNow] = useState(0)
   const newEventIds = useRef(new Set<number>())
@@ -73,53 +79,101 @@ export default function EventsFeed() {
   }, [addEvent])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNow(Date.now())
     const interval = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(interval)
   }, [])
 
   return (
-    <Card className="h-full rounded-none border-r-0 border-t xl:fixed xl:right-0 xl:top-0 xl:w-[280px] xl:border-t-0">
-      <CardHeader className="flex flex-row items-center justify-between border-b px-4 py-3">
-        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-green-500" />
-          </span>
-          Live
-        </CardTitle>
-        <Badge variant="secondary" className="px-1.5 py-0 text-[10px] font-medium">
-          {events.length}
-        </Badge>
-      </CardHeader>
-      <CardContent className="scrollbar-hide overflow-y-auto px-0 py-0" style={{ maxHeight: "calc(100vh - 3.5rem)" }}>
-        <div className="flex flex-col">
-          {events.map((evt) => {
-            const style = TYPE_STYLES[evt.type]
-            const isNew = newEventIds.current.has(evt.id)
-            return (
-              <div
-                key={evt.id}
-                className={`flex items-start gap-3 border-b border-border/40 border-l-2 ${style.border} px-4 py-3 text-sm ${
-                  isNew ? "animate-[fadeIn_0.4s_ease-out]" : ""
-                }`}
+    <>
+      {/* Desktop: fixed panel */}
+      <Card className="hidden xl:flex rounded-none border-r-0 border-l xl:fixed xl:right-0 xl:top-0 xl:w-[280px] xl:h-full xl:flex-col xl:border-t-0">
+        <CardHeader className="flex flex-row items-center justify-between border-b px-4 py-3 shrink-0">
+          <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+            </span>
+            Live
+          </CardTitle>
+          <Badge variant="secondary" className="px-1.5 py-0 text-[10px] font-medium">
+            {events.length}
+          </Badge>
+        </CardHeader>
+        <CardContent className="scrollbar-hide overflow-y-auto px-0 py-0 flex-1" style={{ maxHeight: "calc(100vh - 3.5rem)" }}>
+          <EventList events={events} newEventIds={newEventIds} now={now} />
+        </CardContent>
+      </Card>
+
+      {/* Mobile: drawer */}
+      <div
+        className={
+          "fixed inset-y-0 right-0 z-50 w-[300px] max-w-full bg-sidebar shadow-xl transition-[transform] duration-300 ease-in-out will-change-[transform] xl:hidden " +
+          (mobileOpen ? "[transform:translateX(0px)]" : "[transform:translateX(100%)]")
+        }
+      >
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between border-b px-4 py-3 shrink-0">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+              </span>
+              Live Events
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="px-1.5 py-0 text-[10px] font-medium">
+                {events.length}
+              </Badge>
+              <button
+                onClick={onClose}
+                className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted"
               >
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm text-foreground">{evt.label}</p>
-                  <div className="mt-1 flex items-center gap-2">
-                    <span className={`rounded px-1 py-0 text-[10px] font-medium ${style.badge}`}>
-                      {style.label}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">
-                      {relativeTime(evt.timestamp, now)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+          <div className="scrollbar-hide overflow-y-auto flex-1">
+            <EventList events={events} newEventIds={newEventIds} now={now} />
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </>
+  )
+}
+
+function EventList({ events, newEventIds, now }: {
+  events: FeedEvent[]
+  newEventIds: React.MutableRefObject<Set<number>>
+  now: number
+}) {
+  return (
+    <div className="flex flex-col">
+      {events.map((evt) => {
+        const style = TYPE_STYLES[evt.type]
+        const isNew = newEventIds.current.has(evt.id)
+        return (
+          <div
+            key={evt.id}
+            className={`flex items-start gap-3 border-b border-border/40 border-l-2 ${style.border} px-4 py-3 text-sm ${
+              isNew ? "animate-[fadeIn_0.4s_ease-out]" : ""
+            }`}
+          >
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm text-foreground">{evt.label}</p>
+              <div className="mt-1 flex items-center gap-2">
+                <span className={`rounded px-1 py-0 text-[10px] font-medium ${style.badge}`}>
+                  {style.label}
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  {relativeTime(evt.timestamp, now)}
+                </span>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
   )
 }

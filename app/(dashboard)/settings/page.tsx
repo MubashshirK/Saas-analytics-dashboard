@@ -98,7 +98,7 @@ export default function SettingsPage() {
             <div className="rounded-md border px-3 py-2 text-sm font-mono text-muted-foreground">
               sk_live_••••••••••••••••••••••••••
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <Button variant="outline" size="sm">Regenerate</Button>
               <Button variant="outline" size="sm">Copy</Button>
             </div>
@@ -114,7 +114,7 @@ export default function SettingsPage() {
             <p className="text-sm text-muted-foreground">
               Export your analytics data for external analysis.
             </p>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <Button variant="outline" size="sm">Export CSV</Button>
               <Button variant="outline" size="sm">Export JSON</Button>
             </div>
@@ -131,14 +131,14 @@ export default function SettingsPage() {
           <p className="text-sm text-muted-foreground">
             Irreversible actions that will affect your entire workspace.
           </p>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="border-red-500/30 text-red-500 hover:bg-red-500/10">
-              Delete workspace
-            </Button>
-            <Button variant="outline" size="sm" className="border-red-500/30 text-red-500 hover:bg-red-500/10">
-              Revoke all keys
-            </Button>
-          </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button variant="outline" size="sm" className="border-red-500/30 text-red-500 hover:bg-red-500/10">
+                Delete workspace
+              </Button>
+              <Button variant="outline" size="sm" className="border-red-500/30 text-red-500 hover:bg-red-500/10">
+                Revoke all keys
+              </Button>
+            </div>
         </CardContent>
       </Card>
     </div>

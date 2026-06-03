@@ -104,7 +104,10 @@ function ChannelRow({ source, value, trend, change, color, icon: Icon, mounted }
 
 export default function AcquisitionChart({ dateRange }: AcquisitionChartProps) {
   const [mounted, setMounted] = useState(false)
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true)
+  }, [])
   const data = useMemo(() => acquisitionData[dateRange], [dateRange])
   const total = useMemo(() => data.reduce((s, d) => s + d.users, 0), [data])
 

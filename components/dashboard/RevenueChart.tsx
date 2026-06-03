@@ -20,10 +20,16 @@ interface RevenueChartProps {
   dateRange: DateRange
 }
 
-function CustomTooltip({ active, payload, label }: any) {
+type TooltipPayloadEntry = {
+  name: string
+  value: number
+  color: string
+}
+
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: TooltipPayloadEntry[]; label?: string }) {
   if (!active || !payload?.length) return null
   const seen = new Set<string>()
-  const unique = payload.filter((entry: any) => {
+  const unique = payload.filter((entry) => {
     if (seen.has(entry.name)) return false
     seen.add(entry.name)
     return true
@@ -31,7 +37,7 @@ function CustomTooltip({ active, payload, label }: any) {
   return (
     <div className="rounded-lg border bg-popover px-3 py-2 text-sm shadow-lg">
       <p className="mb-1.5 font-semibold text-foreground">{label}</p>
-      {unique.map((entry: any) => (
+      {unique.map((entry) => (
         <div key={entry.name} className="flex items-center gap-2 py-0.5">
           <span
             className="inline-block size-2.5 rounded-full"
