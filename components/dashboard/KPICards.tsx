@@ -99,7 +99,7 @@ export default function KPICards({ dateRange }: KPICardsProps) {
   const data = kpiData[dateRange]
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card, i) => {
         const rawValue = data[card.key]
         const deltaKey = `${card.key}Delta` as keyof typeof data
@@ -115,7 +115,7 @@ export default function KPICards({ dateRange }: KPICardsProps) {
                   <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     {card.label}
                   </span>
-                  <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+                  <span className="flex shrink-0 size-9 items-center justify-center rounded-lg bg-primary/10">
                     <card.icon size={18} className="text-primary" />
                   </span>
                 </div>

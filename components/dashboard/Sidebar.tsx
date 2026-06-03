@@ -8,8 +8,8 @@ import {
   Wallet,
   Users,
   Settings,
-  ChevronLeft,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
   LogOut,
   User,
   RefreshCw,
@@ -68,15 +68,11 @@ export default function Sidebar({ mobileMenuOpen, onClose }: SidebarProps) {
       <div className="flex h-14 items-center border-b">
         {sidebarCollapsed ? (
           <div className="flex w-full items-center justify-center">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 text-sm font-bold text-primary-foreground shadow-sm">
-              S
-            </div>
+            <img src="/icon.svg" alt="SaaS" className="size-8" />
           </div>
         ) : (
           <div className="flex w-full items-center gap-3 px-3">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 text-sm font-bold text-primary-foreground shadow-sm">
-              S
-            </div>
+            <img src="/icon.svg" alt="SaaS" className="size-8 rounded-lg" />
             <div className="flex flex-1 items-center justify-between">
               <div className="flex flex-col leading-tight">
                 <span className="text-sm font-semibold tracking-tight">SaaS</span>
@@ -93,15 +89,27 @@ export default function Sidebar({ mobileMenuOpen, onClose }: SidebarProps) {
         )}
       </div>
 
+      <div className={cn("max-md:hidden flex items-center", sidebarCollapsed ? "justify-center pt-2 pb-1" : "justify-end px-3 mt-2")}>
+        <span
+          className={cn(
+            "flex cursor-pointer items-center justify-center rounded-lg text-sidebar-foreground/30 transition-colors hover:text-sidebar-foreground",
+            sidebarCollapsed ? "size-9" : "size-9"
+          )}
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+        >
+          {sidebarCollapsed ? <PanelLeftOpen size={24} /> : <PanelLeftClose size={24} />}
+        </span>
+      </div>
+
       {!sidebarCollapsed && (
-        <div className="px-4 pt-4 pb-1">
+        <div className="px-4 pt-1 pb-0.5">
           <span className="text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/30">
             Main Menu
           </span>
         </div>
       )}
 
-      <nav className="flex flex-1 flex-col gap-0.5 px-2 py-2 overflow-hidden">
+      <nav className="flex flex-1 flex-col gap-0.5 px-2 pt-1 pb-2 overflow-hidden">
         {navItems.map((item) => {
           const isActive = pathname === item.href
           const navContent = (
@@ -171,80 +179,79 @@ export default function Sidebar({ mobileMenuOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      <div className={cn("max-md:hidden px-2 pb-2", sidebarCollapsed && "px-0 flex justify-center")}>
-        <Tooltip>
-          <TooltipTrigger>
-            <span
-              className={cn(
-                "flex cursor-pointer items-center rounded-lg text-sidebar-foreground/30 transition-colors hover:text-sidebar-foreground",
-                sidebarCollapsed ? "justify-center py-3" : "gap-2 px-3 py-2"
-              )}
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            >
-              {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={14} />}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            {sidebarCollapsed ? "Expand" : "Collapse"}
-          </TooltipContent>
-        </Tooltip>
-      </div>
+      <div className="mt-auto">
+        <Separator />
 
-      <Separator />
-
-      <div className={cn("overflow-hidden", sidebarCollapsed ? "flex justify-center ml-2" : "p-3")}>
-        <DropdownMenu>
-          <DropdownMenuTrigger className={sidebarCollapsed ? "flex items-center justify-center" : ""}>
-            <span
-              className={cn(
-                "flex w-full cursor-pointer items-center gap-3 rounded-lg text-sm transition-colors hover:bg-sidebar-accent/50",
-                sidebarCollapsed
-                  ? "justify-center px-0 py-3"
-                  : "px-3 py-2.5 text-sidebar-foreground/70 hover:text-sidebar-foreground"
-              )}
-            >
-              <span className="relative flex shrink-0">
-                <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-sidebar-primary to-sidebar-primary/60 text-xs font-semibold text-sidebar-primary-foreground shadow-sm">
-                  JD
+        {sidebarCollapsed ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <span className="flex cursor-pointer items-center justify-center py-3 ml-[16px]">
+                <span className="relative flex shrink-0">
+                  <span className="flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-sidebar-primary to-sidebar-primary/60 text-[10px] font-semibold text-sidebar-primary-foreground shadow-sm">
+                    JD
+                  </span>
+                  <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-sidebar bg-green-500" />
                 </span>
-                <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-sidebar bg-green-500" />
               </span>
-              <span
-                className={cn(
-                  "flex flex-col items-start whitespace-nowrap transition-opacity duration-200",
-                  sidebarCollapsed ? "w-0 opacity-0 overflow-hidden" : "opacity-100"
-                )}
-              >
-                <span className="text-sm font-medium">John Doe</span>
-                <span className="text-xs text-sidebar-foreground/40">Workspace</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56" sideOffset={8}>
+              <DropdownMenuItem className="gap-2">
+                <User size={14} />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2">
+                <RefreshCw size={14} />
+                Switch workspace
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="gap-2 text-red-500 focus:text-red-500">
+                <LogOut size={14} />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <>
+            <div className="p-3">
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <span className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-foreground">
+                    <span className="relative flex shrink-0">
+                      <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-sidebar-primary to-sidebar-primary/60 text-xs font-semibold text-sidebar-primary-foreground shadow-sm">
+                        JD
+                      </span>
+                      <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-sidebar bg-green-500" />
+                    </span>
+                    <span className="flex flex-col items-start whitespace-nowrap">
+                      <span className="text-sm font-medium">John Doe</span>
+                      <span className="text-xs text-sidebar-foreground/40">Workspace</span>
+                    </span>
+                  </span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56" sideOffset={8}>
+                  <DropdownMenuItem className="gap-2">
+                    <User size={14} />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2">
+                    <RefreshCw size={14} />
+                    Switch workspace
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="gap-2 text-red-500 focus:text-red-500">
+                    <LogOut size={14} />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="pb-1 text-center">
+              <span className="text-[10px] text-sidebar-foreground/20">
+                Built by Mubashshir Khan
               </span>
-            </span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align={sidebarCollapsed ? "end" : "start"} className="w-56" sideOffset={8}>
-            <DropdownMenuItem className="gap-2">
-              <User size={14} />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2">
-              <RefreshCw size={14} />
-              Switch workspace
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 text-red-500 focus:text-red-500">
-              <LogOut size={14} />
-              Sign out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      <div className={cn("pb-2 text-center", sidebarCollapsed ? "px-0" : "px-3")}>
-        <span className={cn(
-          "text-[10px] text-sidebar-foreground/20 transition-opacity duration-200",
-          sidebarCollapsed && "w-0 opacity-0 overflow-hidden inline-block"
-        )}>
-          Built by Mubashshir Khan
-        </span>
+            </div>
+          </>
+        )}
       </div>
     </aside>
   )
